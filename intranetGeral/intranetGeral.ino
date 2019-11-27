@@ -17,7 +17,7 @@ uint32_t print_timer_microfone;//variavel pra mudar o valor do led do microfone(
 int pino_buzzer = D5;
 
 ESP8266WebServer server(80);
-String guardaUltrassom="",guardaLdr="",guardaLuzLdr="", guardaMicrofone="", guardaLuzMicrofone="", atualizaPagina="N";
+String guardaUltrassom="",guardaLdr="",guardaLuzLdr="", guardaMicrofone="", guardaLuzMicrofone="";
 
 void setup() {
   Serial.begin(9600); // Habilita Comunicação Serial a uma taxa de 9600 bauds.
@@ -56,11 +56,6 @@ void loop() {
     }
     if(guardaMicrofone=="checked"){
           digitalWrite(pino_led, rele); // Manda o valor da variavel para o rele
-          if(rele==HIGH){
-             atualizaPagina="S";  
-          }else{
-             atualizaPagina="N";
-          }
     }
     if(rele==LOW){
           guardaLuzMicrofone="";
@@ -113,10 +108,10 @@ void paginaPrincipal(){
           s += "m action='/salvo5' method='POST' id='formu5'>  <input name='tes5' type='checkbox' class='entradaonof";
           s += "f' id='onoff5' onclick= enviar5() "+guardaLuzMicrofone+"> <label class='texto-onoff' for='onoff5'> <span class=";
           s += "'spanonoff'></span> <span class='bola-onoff'></span> </label> </form> </div><br> <script type='text/";
-          s += "javascript'> var myVar; function enviar1() {document.getElementById('formu1').submit();} function enviar2() {do";
+          s += "javascript'> function enviar1() {document.getElementById('formu1').submit();} function enviar2() {do";
           s += "cument.getElementById('formu2').submit();} function enviar3() {document.getElementById('formu3').sub";
           s += "mit();}  function enviar4() {document.getElementById('formu4').submit();} function enviar5() {docume";
-          s += "nt.getElementById('formu5').submit();} function aoCarregar(){myVar = setInterval(verifica, 3000);} function verifica(){if("+atualizaPagina+"=='N'){location.reload();}}  </script> </body> </html> ";
+          s += "nt.getElementById('formu5').submit();} function aoCarregar(){myVar = setInterval(verifica, 3000);}  </script> </body> </html> ";
 
   server.send(200,"text/html",s);
   }
@@ -141,14 +136,9 @@ void ultrassom(){
           digitalWrite(trig_pin, HIGH);
           delayMicroseconds(11);
           digitalWrite(trig_pin, LOW);
-           
-          /* Mede quanto tempo o pino de echo ficou no estado alto, ou seja,
-          o tempo de propagação da onda. */
+
           uint32_t pulse_time = pulseIn(echo_pin, HIGH);
-           
-          /* A distância entre o sensor ultrassom e o objeto será proporcional a velocidade
-          do som no meio e a metade do tempo de propagação. Para o ar na
-          temperatura ambiente Vsom = 0,0343 cm/us. */
+          
           double distance = 0.01715 * pulse_time;
            
           // Imprimimos o valor na porta serial;
@@ -190,9 +180,7 @@ void LigaSeguranca(){
   paginaPrincipal();
 }
 void LigaLdr(){
-    //  aux=server.arg("tes2");
-    //Serial.println("CLICLADO---------");
-    //  if (aux.indexOf("on")>=0){
+
     if (server.arg("tes2")=="on"){
       guardaLdr="checked";
     }
